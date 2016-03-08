@@ -3,7 +3,7 @@
 -- | 
 -- | Module : Main
 -- | Creator: Xiao Ling
--- | Created: 2/24/201
+-- | Created: 3/8/2016
 -- | Source : https://github.com/paf31/purescript-thermite
 -- |          http://www.parsonsmatt.org/2015/10/03/elm_vs_purescript.html
 -- |          https://github.com/ethul/purescript-react-example     <- project structure
