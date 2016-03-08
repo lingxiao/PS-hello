@@ -1,0 +1,30 @@
+{
+  "name": "ps-hello",
+  "version": "0.0.1",
+  "description": "a hello world in ps",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lingxiao/PS-hello.git"
+  },
+  "keywords": [
+    "purescript"
+  ],
+  "author": "Xiao Ling",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lingxiao/PS-hello/issues"
+  },
+  "homepage": "https://github.com/lingxiao/PS-hello#readme"
+}
