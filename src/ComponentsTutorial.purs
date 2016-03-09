@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------
 -- | 
--- | Module : Main
+-- | Module : Components tutorial
 -- | Creator: Xiao Ling
 -- | Created: 3/8/2016
 -- | Source : https://github.com/paf31/purescript-thermite
@@ -13,7 +13,7 @@
 -- |          npm  init   - create package.json
 -- |          bower install --save [PACKAGE] to note dependencies in bower.json
 -- |          npm   install --save [PACKAGE] to note dependencies in package.json
--- |          Now build app.js file,  instead of pulp browserify, do:
+-- |          Now build app.js file,  instead of pulp browserfy, do:
 -- |              rm -r output
 -- |              pulp build --to browserify-entry-point.js
 -- |              browserify browserify-entry-point.js > app.js
@@ -25,7 +25,7 @@
 ---------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------
 
-module Main where
+module ComponentsTutorial where
 
 import Prelude
 
@@ -37,11 +37,8 @@ import qualified Data.List as L
 import Control.Monad
 import Control.Monad.Eff
 import Control.Monad.Eff.Console
-import Control.Monad.Aff (Aff, later')
 
 import qualified Thermite as T
-import qualified Thermite.Aff as T
-
 import qualified React.DOM.Props as RP
 import qualified React.DOM as R
 import qualified React as R
@@ -109,7 +106,7 @@ counter' go _ state _ =
   ]
 
 header' :: T.Render _ _ _   
-header' _ _ _ _ = [ R.h1' [ R.text "This is the header" ] ]
+header' _ _ _ _ = [ R.h1' [ R.text "This is a header" ] ]
 
 footer' :: T.Render _ _ _   
 footer' _ _ _ _ = [ R.p'  [ R.text "This is the footer " ]]
@@ -147,6 +144,7 @@ footer = footer' ~> T.defaultPerformAction
     Common lenses include _1 and _2 (representing the two sides of a Tuple),
     and common prisms include _Left and _Right, representing the two constructors 
     of the Either type constructor.
+
 -------------------------------------------------------------------}
 
 -- * Note how Thermite components are monoids
