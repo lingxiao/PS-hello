@@ -17,6 +17,7 @@
     "purescript-thermite": "^0.15.0",
     "purescript-aff": "^0.15.0",
     "purescript-profunctor-lenses": "^0.5.0",
-    "purescript-thermite-aff": "^0.3.1"
+    "purescript-thermite-aff": "^0.3.1",
+    "purescript-unsafe-coerce": "^0.1.0"
   }
 }

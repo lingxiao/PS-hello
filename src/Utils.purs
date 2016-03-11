@@ -43,6 +43,7 @@ import qualified DOM.HTML.Types as DOM
 import qualified DOM.HTML.Window as DOM
 import qualified DOM.Node.ParentNode as DOM
 
+import Unsafe.Coerce
 import Data.Maybe.Unsafe
 import Data.Nullable (toMaybe)
 
@@ -67,8 +68,8 @@ defaultMain spec state0 = void do
 ----------------------------------------------------------------}
 
 -- * haskell `undefined`
---hole :: forall a. a
---hole = unit
+hole :: forall a. a
+hole = unsafeCoerce unit
 
 
 

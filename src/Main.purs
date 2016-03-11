@@ -120,7 +120,8 @@ header' go _ _ _ = [ R.h1' [ R.text "This is the Header" ]
 
 footer' :: T.Render _ _ _   
 footer' _ _ _ _ = [ R.p'  [ R.text "This is the footer " ]]
- 
+
+
 {-------------------------------------------------------------------
     Views + Controllers - note all view + controller have name FOO
 -------------------------------------------------------------------}
