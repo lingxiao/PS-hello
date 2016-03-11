@@ -30,6 +30,7 @@ module Main where
 import Prelude
 
 import Data.Lens
+import Data.Maybe
 import Data.Tuple
 import Data.Either
 import qualified Data.List as L
@@ -55,6 +56,8 @@ import qualified DOM.Node.ParentNode as DOM
 import Data.Maybe.Unsafe
 import Data.Nullable (toMaybe)
 
+import Utils
+
 
 -- * function synonym
 (~>) :: forall eff state props action. 
@@ -67,23 +70,21 @@ import Data.Nullable (toMaybe)
     Application types
 -------------------------------------------------------------------}
 
--- * a thermite component is just some state
+-- * for each module in application
+type Id        = Int
 type State     = Int
-
--- * a action over state
 data Action    = Incr | Decr
 
--- * App state
-type AppState  = Tuple State State
+-- * for the entire application
+type AppState  = L.List State
 
--- * Applicaton action
-type AppAction = Either Action Action
-
+data AppAction = AddCounter | Item Id Action
 
 {-------------------------------------------------------------------
     Views - note all view names are of form FOO'
 -------------------------------------------------------------------}
 
+-- * This view has emits signals for listeners
 -- * This view has emits signals for listeners
 counter' :: T.Render State _ Action
 counter' go _ state _ = 
@@ -108,8 +109,14 @@ counter' go _ state _ =
           ]
   ]
 
-header' :: T.Render _ _ _   
-header' _ _ _ _ = [ R.h1' [ R.text "This is the header" ] ]
+-- * header adds new counters
+header' :: T.Render AppState _ AppAction
+header' go _ _ _ = [ R.h1' [ R.text "This is the Header" ]
+                   , R.p'  [ R.button [ RP.className "btn btn-success"
+                                      , RP.onClick \_ -> go AddCounter ]
+                             [ R.text "Add Counter" ] 
+                           ]
+                  ]
 
 footer' :: T.Render _ _ _   
 footer' _ _ _ _ = [ R.p'  [ R.text "This is the footer " ]]
@@ -125,62 +132,50 @@ counter = counter' ~> controller
         controller Incr _ _  go = go $ \s -> s + 1
         controller Decr _ _  go = go $ \s -> s - 1
 
-header :: T.Spec _ _ _ _
-header = header' ~> T.defaultPerformAction 
 
--- The footer component
+header :: T.Spec _ _ _ _
+header = header' ~> (controller state0)
+  where
+    -- * module initial state
+    state0 :: State
+    state0  = 100 
+
+    controller :: State -> T.PerformAction _ AppState _ AppAction
+    controller s0 AddCounter _ _ update = update $ flip L.snoc s0
+    controller _  _          _ _ _      = pure unit
+
 footer :: T.Spec _ _ _ _
 footer = footer' ~> T.defaultPerformAction 
 
 
-{-------------------------------------------------------------------
+{----------------------------------------------------------------------------------
     Application
-
-    Now, create a specification for a component consisting of two counters.
-
-    The "focus" combinator changes the state type of a component
-    by looking at a small part of a larger component's state, using a _Lens_.
-
-    Similarly, we can embed an action types inside the actions of a
-    larger component, by using a _Prism_.
-
-    Common lenses include _1 and _2 (representing the two sides of a Tuple),
-    and common prisms include _Left and _Right, representing the two constructors 
-    of the Either type constructor.
--------------------------------------------------------------------}
+----------------------------------------------------------------------------------}
 
 -- * Note how Thermite components are monoids
 app :: T.Spec _ AppState _ AppAction
-app = header <> T.focus _1 _Left counter <> T.focus _2 _Right counter <> footer
+app = header <> T.focus id _Item (T.foreach \_ -> counter) <> footer
 
+-- * app initial state
+appState0 :: AppState
+appState0 = L.Nil
 
--- * every component needs an initial state
-state0 :: AppState
-state0 = Tuple 0 100
-
-
--- * main
+-- * main app
 main :: forall m. Eff (dom :: DOM.DOM | m ) Unit
-main = defaultMain app state0
+main = defaultMain app appState0
 
-{----------------------------------------------------------------
-     Default main
-----------------------------------------------------------------}
+{-------------------------------------------------------------------
+  Define our own Prism corresponding to the Item
+  data constructor.
+-------------------------------------------------------------------}
 
--- * note :   void :: forall f a. Functor f => f a -> f ()
-defaultMain :: forall state action eff. 
-                      T.Spec _ state _ action -> state -> Eff (dom :: DOM.DOM | eff) Unit
-defaultMain spec state0 = void do
-  let component = T.createClass spec state0
-  win       <- DOM.window
-  doc       <- DOM.document win
-  container <- fromJust <<< toMaybe <$> DOM.querySelector "#app" (DOM.htmlDocumentToParentNode doc)
-  ReactDOM.render (R.createFactory component {}) container
-
-
-
-
-
+-- * prism' :: forall s a. (a -> s) -> (s -> Maybe a) 
+-- *                        -> (forall p. Choice p => p a a -> p s s)
+_Item :: PrismP AppAction (Tuple Id Action)
+_Item = prism' (uncurry Item) unwrap
+  where
+    unwrap (Item i a) = Just (Tuple i a)
+    unwrap _          = Nothing
 
 
 
